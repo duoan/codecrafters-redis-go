@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"net"
 	"os"
 )
@@ -24,6 +25,7 @@ func main() {
 	for {
 		// Listen for an incoming connection
 		conn, err := l.Accept()
+
 		if err != nil {
 			fmt.Println("Error accepting connection: ", err.Error())
 			os.Exit(1)
@@ -33,20 +35,26 @@ func main() {
 		go func(conn net.Conn) {
 			// close when function ends
 			defer conn.Close()
+			for {
+				buf := make([]byte, 1024)
+				len, err := conn.Read(buf)
 
-			buf := make([]byte, 1024)
-			len, err := conn.Read(buf)
+				if err == io.EOF {
+					break
+				}
 
-			if err != nil {
-				fmt.Printf("Error reading: %#v\n", err)
-			}
+				if err != nil {
+					fmt.Printf("Error reading from connection: %#v\n", err)
+					os.Exit(1)
+				}
 
-			request := string(buf[:len])
-			fmt.Printf("Message received: %s\n\n", request)
+				request := string(buf[:len])
+				fmt.Printf("Message received: %s\n\n", request)
 
-			_, err = conn.Write([]byte("+PONG\r\n"))
-			if err != nil {
-				fmt.Printf("Error Writing: %#v\n", err)
+				_, err = conn.Write([]byte("+PONG\r\n"))
+				if err != nil {
+					fmt.Printf("Error Writing: %#v\n", err)
+				}
 			}
 		}(conn)
 	}
