@@ -4,9 +4,6 @@ import (
 	"fmt"
 	"net"
 	"os"
-	// Uncomment this block to pass the first stage
-	// "net"
-	// "os"
 )
 
 func main() {
@@ -19,6 +16,9 @@ func main() {
 		fmt.Println("Failed to bind to port 6379")
 		os.Exit(1)
 	}
+
+	// Close Listener when application close.
+	defer l.Close()
 
 	// continue accepting clients request
 	for {
