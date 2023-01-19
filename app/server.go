@@ -43,7 +43,7 @@ func main() {
 			request := string(buf[:len])
 			fmt.Printf("Message received: %s\n\n", request)
 
-			_, err = conn.Write([]byte("PONG\r\n"))
+			_, err = conn.Write([]byte("+PONG\r\n"))
 			if err != nil {
 				fmt.Printf("Error Writing: %#v\n", err)
 			}
