@@ -20,6 +20,7 @@ func main() {
 		os.Exit(1)
 	}
 
+	// continue accepting clients request
 	for {
 		// Listen for an incoming connection
 		conn, err := l.Accept()
